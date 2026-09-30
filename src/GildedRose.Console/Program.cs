@@ -36,77 +36,97 @@ public class Program
 
     public void UpdateQuality()
     {
-        for (var i = 0; i < Items.Count; i++)
+        foreach (var item in Items)
         {
-            if (Items[i].Name != "Aged Brie" && Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
+            if (IsSulfuras(item))
             {
-                if (Items[i].Quality > 0)
-                {
-                    if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                    {
-                        Items[i].Quality = Items[i].Quality - 1;
-                    }
-                }
+                continue;
+            }
+
+            if (IsBackstagePass(item))
+            {
+                UpdateBackstagePass(item);
+            }
+            else if (IsAgedBrie(item))
+            {
+                IncreaseQuality(item);
+            }
+            else if (IsConjured(item))
+            {
+                DecreaseQuality(item, 2);
             }
             else
             {
-                if (Items[i].Quality < 50)
+                DecreaseQuality(item);
+            }
+
+            item.SellIn--;
+
+            if (item.SellIn < 0)
+            {
+                if (IsBackstagePass(item))
                 {
-                    Items[i].Quality = Items[i].Quality + 1;
-
-                    if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
-                    {
-                        if (Items[i].SellIn < 11)
-                        {
-                            if (Items[i].Quality < 50)
-                            {
-                                Items[i].Quality = Items[i].Quality + 1;
-                            }
-                        }
-
-                        if (Items[i].SellIn < 6)
-                        {
-                            if (Items[i].Quality < 50)
-                            {
-                                Items[i].Quality = Items[i].Quality + 1;
-                            }
-                        }
-                    }
+                    item.Quality = 0;
                 }
-            }
-
-            if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-            {
-                Items[i].SellIn = Items[i].SellIn - 1;
-            }
-
-            if (Items[i].SellIn < 0)
-            {
-                if (Items[i].Name != "Aged Brie")
+                else if (IsAgedBrie(item))
                 {
-                    if (Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-                    {
-                        if (Items[i].Quality > 0)
-                        {
-                            if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                            {
-                                Items[i].Quality = Items[i].Quality - 1;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Items[i].Quality = Items[i].Quality - Items[i].Quality;
-                    }
+                    IncreaseQuality(item);
+                }
+                else if (IsConjured(item))
+                {
+                    DecreaseQuality(item, 2);
                 }
                 else
                 {
-                    if (Items[i].Quality < 50)
-                    {
-                        Items[i].Quality = Items[i].Quality + 1;
-                    }
+                    DecreaseQuality(item);
                 }
             }
+        }
+    }
+
+    private static bool IsSulfuras(Item item)
+    {
+        return item.Name == "Sulfuras, Hand of Ragnaros";
+    }
+
+    private static bool IsAgedBrie(Item item)
+    {
+        return item.Name == "Aged Brie";
+    }
+
+    private static bool IsBackstagePass(Item item)
+    {
+        return item.Name == "Backstage passes to a TAFKAL80ETC concert";
+    }
+
+    private static bool IsConjured(Item item)
+    {
+        return item.Name.StartsWith("Conjured");
+    }
+
+    private static void IncreaseQuality(Item item, int amount = 1)
+    {
+        item.Quality = Math.Min(50, item.Quality + amount);
+    }
+
+    private static void DecreaseQuality(Item item, int amount = 1)
+    {
+        item.Quality = Math.Max(0, item.Quality - amount);
+    }
+
+    private static void UpdateBackstagePass(Item item)
+    {
+        if (item.SellIn <= 5)
+        {
+            IncreaseQuality(item, 3);
+        }
+        else if (item.SellIn <= 10)
+        {
+            IncreaseQuality(item, 2);
+        }
+        else
+        {
+            IncreaseQuality(item);
         }
     }
 }

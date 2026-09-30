@@ -1,3 +1,5 @@
+###  I used ChatGPT as a supporting tool during the code review to help identify potential issues and validate some of my observations. Some issues were identified independently through my own review, while ChatGPT helped surface additional issues and considerations that I then reviewed and verified myself. I also used ChatGPT to help organize and format the review document clearly.
+
 # Code Review — CodeToReview.cs
 
 ## Summary
